@@ -26,6 +26,8 @@ function App() {
 
     const [currentSongIndex, setCurrentSongIndex] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
     const audioRef = useRef(null);
 
     const handleSongSelect = (index) => {
@@ -54,16 +56,34 @@ function App() {
         setIsPlaying(true);
     };
 
+    const handleTimeUpdate = () => {
+        setCurrentTime(audioRef.current.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+        setDuration(audioRef.current.duration);
+    };
+
+    const handleSeek = (e) => {
+        const value = parseFloat(e.target.value);
+        audioRef.current.currentTime = value;
+        setCurrentTime(value);
+    };
+
+    const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    };
+
     useEffect(() => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.play().catch(error => {
-                    console.error("Playback failed:", error);
-                    setIsPlaying(false);
-                });
-            }
+        if (audioRef.current && isPlaying) {
+            audioRef.current.play().catch((err) => {
+                console.error("Playback failed:", err);
+                setIsPlaying(false);
+            });
         }
-    }, [currentSongIndex, isPlaying]);
+    }, [currentSongIndex]);
 
     return (
         <div className="min-h-screen bg-gray-900 text-white text-center">
@@ -75,7 +95,6 @@ function App() {
                                 MUSIC-PLAYER
                             </a>
                         </div>
-
                     </div>
                 </div>
             </header>
@@ -105,10 +124,29 @@ function App() {
                                     ⏭
                                 </button>
                             </div>
+
+                            {/* PROGRESS BAR */}
+                            <div className="mt-4">
+                                <input
+                                    type="range"
+                                    min={0}
+                                    max={duration}
+                                    value={currentTime}
+                                    onChange={handleSeek}
+                                    className="w-full accent-blue-500"
+                                />
+                                <div className="flex justify-between text-sm text-gray-300 mt-1">
+                                    <span>{formatTime(currentTime)}</span>
+                                    <span>{formatTime(duration)}</span>
+                                </div>
+                            </div>
+
                             <audio
                                 ref={audioRef}
                                 src={`/songs/${encodeURIComponent(songs[currentSongIndex])}`}
                                 onEnded={playNextSong}
+                                onTimeUpdate={handleTimeUpdate}
+                                onLoadedMetadata={handleLoadedMetadata}
                             />
                         </div>
                     )}
@@ -137,9 +175,10 @@ function App() {
                     )}
                 </div>
             </main>
+
             <footer>
                 <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-                    <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8"/>
+                    <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8" />
                     <div className="md:flex md:justify-between">
                         <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4 w-full">
                             <div className="mb-6 md:mb-0">
@@ -149,18 +188,14 @@ function App() {
                             </div>
                             <div className="mb-6 md:mb-0">
                                 <h2 className="mb-6 text-2xl font-bold text-white">Legal matters</h2>
-                                <ul className="text-gray-200 font-medium">
-                                    <li>
-                                    </li>
-                                </ul>
                             </div>
                             <div className="mb-6 md:mb-0">
                                 <h2 className="mb-6 text-2xl font-bold text-white">Resources</h2>
                                 <ul className="text-gray-200 font-medium">
                                     <li className="mb-4">
-                                        <a href="https://tailwindcss.com/"
-                                           className="hover:text-blue-500 transition-colors duration-300">Tailwind
-                                            CSS</a>
+                                        <a href="https://tailwindcss.com/" className="hover:text-blue-500 transition-colors duration-300">
+                                            Tailwind CSS
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
@@ -168,27 +203,27 @@ function App() {
                                 <h2 className="mb-6 text-2xl font-bold text-white">Team</h2>
                                 <ul className="text-gray-200 font-medium">
                                     <li className="mb-4">
-                                        <a href='https://github.com/Hari-42'
-                                           className="hover:text-blue-500 transition-colors duration-300">Github -
-                                            Hari-42</a>
+                                        <a href="https://github.com/Hari-42" className="hover:text-blue-500 transition-colors duration-300">
+                                            Github - Hari-42
+                                        </a>
                                     </li>
                                     <li className="mb-4">
-                                        <a href='https://github.com/mattadosss'
-                                           className="hover:text-blue-500 transition-colors duration-300">Github -
-                                            matadosss</a>
+                                        <a href="https://github.com/mattadosss" className="hover:text-blue-500 transition-colors duration-300">
+                                            Github - matadosss
+                                        </a>
                                     </li>
                                     <li className="mb-4">
-                                        <a href='https://github.com/koskogo'
-                                           className="hover:text-blue-500 transition-colors duration-300">Github -
-                                            koskogo</a>
+                                        <a href="https://github.com/koskogo" className="hover:text-blue-500 transition-colors duration-300">
+                                            Github - koskogo
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8"/>
+                    <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8" />
                     <div className="flex items-center justify-center flex-wrap">
-                        <span className="text-sm text-black-500 text-center">© 2025 All Rights Reserved.</span>
+                        <span className="text-sm text-gray-500 text-center">© 2025 All Rights Reserved.</span>
                     </div>
                 </div>
             </footer>
