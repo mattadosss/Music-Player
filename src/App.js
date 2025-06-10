@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -25,12 +25,71 @@ function App() {
         'Ryan Castro - Mujeriego (LetraLyrics).mp3'
     ]);
 
+    const [currentSongIndex, setCurrentSongIndex] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const audioRef = useRef(null);
+
+    const handleSongSelect = (index) => {
+        setCurrentSongIndex(index);
+        setIsPlaying(true);
+    };
+
+    const togglePlayPause = () => {
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
+    };
+
+    const playNextSong = () => {
+        const nextIndex = (currentSongIndex + 1) % songs.length;
+        setCurrentSongIndex(nextIndex);
+        setIsPlaying(true);
+    };
+
+    const playPreviousSong = () => {
+        const prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+        setCurrentSongIndex(prevIndex);
+        setIsPlaying(true);
+    };
+
+    useEffect(() => {
+        if (audioRef.current) {
+            if (isPlaying) {
+                audioRef.current.play().catch(error => {
+                    console.error("Playback failed:", error);
+                    setIsPlaying(false);
+                });
+            }
+        }
+    }, [currentSongIndex, isPlaying]);
+
     return (
         <div className="App">
-            <header className="App-header">
-                <h1>My Music Player</h1>
-            </header>
             <main>
+                <div className="player-container">
+                    {currentSongIndex !== null && (
+                        <div className="now-playing">
+                            <h2>Now Playing</h2>
+                            <p>{songs[currentSongIndex].replace('.mp3', '')}</p>
+                            <div className="player-controls">
+                                <button onClick={playPreviousSong}>⏮</button>
+                                <button onClick={togglePlayPause}>
+                                    {isPlaying ? '⏸' : '⏵'}
+                                </button>
+                                <button onClick={playNextSong}>⏭</button>
+                            </div>
+                            <audio
+                                ref={audioRef}
+                                src={`/songs/${encodeURIComponent(songs[currentSongIndex])}`}
+                                onEnded={playNextSong}
+                            />
+                        </div>
+                    )}
+                </div>
+
                 <div className="song-list">
                     <h2>Available Songs</h2>
                     {songs.length === 0 ? (
@@ -38,21 +97,12 @@ function App() {
                     ) : (
                         <ul>
                             {songs.map((song, index) => (
-                                <li key={index}>
-                                    <div className="song-item">
-                                        <a
-                                            href={`/songs/${encodeURIComponent(song)}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="song-link"
-                                        >
-                                            {song.replace('.mp3', '')}
-                                        </a>
-                                        <audio controls className="audio-player">
-                                            <source src={`/songs/${encodeURIComponent(song)}`} type="audio/mpeg" />
-                                            Your browser does not support the audio element.
-                                        </audio>
-                                    </div>
+                                <li
+                                    key={index}
+                                    className={`song-item ${index === currentSongIndex ? 'active' : ''}`}
+                                    onClick={() => handleSongSelect(index)}
+                                >
+                                    {song.replace('.mp3', '')}
                                 </li>
                             ))}
                         </ul>
