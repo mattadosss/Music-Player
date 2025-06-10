@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import './App.css';
 
 function App() {
     const [songs] = useState([
@@ -67,19 +66,44 @@ function App() {
     }, [currentSongIndex, isPlaying]);
 
     return (
-        <div className="App">
-            <main>
-                <div className="player-container">
+        <div className="min-h-screen bg-gray-900 text-white text-center">
+            <header className="sm:flex sm:justify-between py-3">
+                <div className="px-4 lg:px-8 mx-auto w-full max-w-4xl">
+                    <div className="border-b relative flex h-16 items-center justify-between w-full">
+                        <div className="flex items-center">
+                            <a className="flex items-center space-x-6">
+                                MUSIC-PLAYER
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </header>
+            <main className="py-8">
+                <div className="max-w-md mx-auto my-5 p-5 bg-gray-800 rounded-lg">
                     {currentSongIndex !== null && (
-                        <div className="now-playing">
-                            <h2>Now Playing</h2>
-                            <p>{songs[currentSongIndex].replace('.mp3', '')}</p>
-                            <div className="player-controls">
-                                <button onClick={playPreviousSong}>⏮</button>
-                                <button onClick={togglePlayPause}>
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold">Now Playing</h2>
+                            <p className="text-lg">{songs[currentSongIndex].replace('.mp3', '')}</p>
+                            <div className="flex justify-center gap-5 mt-4">
+                                <button
+                                    onClick={playPreviousSong}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                                >
+                                    ⏮
+                                </button>
+                                <button
+                                    onClick={togglePlayPause}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                                >
                                     {isPlaying ? '⏸' : '⏵'}
                                 </button>
-                                <button onClick={playNextSong}>⏭</button>
+                                <button
+                                    onClick={playNextSong}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                                >
+                                    ⏭
+                                </button>
                             </div>
                             <audio
                                 ref={audioRef}
@@ -90,16 +114,20 @@ function App() {
                     )}
                 </div>
 
-                <div className="song-list">
-                    <h2>Available Songs</h2>
+                <div className="max-w-2xl mx-auto my-5">
+                    <h2 className="text-xl font-bold mb-4">Available Songs</h2>
                     {songs.length === 0 ? (
                         <p>No songs found</p>
                     ) : (
-                        <ul>
+                        <ul className="space-y-2">
                             {songs.map((song, index) => (
                                 <li
                                     key={index}
-                                    className={`song-item ${index === currentSongIndex ? 'active' : ''}`}
+                                    className={`p-3 rounded cursor-pointer transition-colors ${
+                                        index === currentSongIndex
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-gray-800 hover:bg-gray-700'
+                                    }`}
                                     onClick={() => handleSongSelect(index)}
                                 >
                                     {song.replace('.mp3', '')}
@@ -109,6 +137,61 @@ function App() {
                     )}
                 </div>
             </main>
+            <footer>
+                <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+                    <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8"/>
+                    <div className="md:flex md:justify-between">
+                        <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4 w-full">
+                            <div className="mb-6 md:mb-0">
+                                <a className="flex items-center">
+                                    <span className="self-center text-2xl font-bold whitespace-nowrap text-white">MUSIC PLAYER</span>
+                                </a>
+                            </div>
+                            <div className="mb-6 md:mb-0">
+                                <h2 className="mb-6 text-2xl font-bold text-white">Legal matters</h2>
+                                <ul className="text-gray-200 font-medium">
+                                    <li>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="mb-6 md:mb-0">
+                                <h2 className="mb-6 text-2xl font-bold text-white">Resources</h2>
+                                <ul className="text-gray-200 font-medium">
+                                    <li className="mb-4">
+                                        <a href="https://tailwindcss.com/"
+                                           className="hover:text-blue-500 transition-colors duration-300">Tailwind
+                                            CSS</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="mb-6 md:mb-0">
+                                <h2 className="mb-6 text-2xl font-bold text-white">Team</h2>
+                                <ul className="text-gray-200 font-medium">
+                                    <li className="mb-4">
+                                        <a href='https://github.com/Hari-42'
+                                           className="hover:text-blue-500 transition-colors duration-300">Github -
+                                            Hari-42</a>
+                                    </li>
+                                    <li className="mb-4">
+                                        <a href='https://github.com/mattadosss'
+                                           className="hover:text-blue-500 transition-colors duration-300">Github -
+                                            matadosss</a>
+                                    </li>
+                                    <li className="mb-4">
+                                        <a href='https://github.com/koskogo'
+                                           className="hover:text-blue-500 transition-colors duration-300">Github -
+                                            koskogo</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8"/>
+                    <div className="flex items-center justify-center flex-wrap">
+                        <span className="text-sm text-black-500 text-center">© 2025 All Rights Reserved.</span>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
