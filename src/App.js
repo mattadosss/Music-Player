@@ -21,7 +21,8 @@ function App() {
         'Kiss - I Was Made For Lovin You.mp3',
         'MC Hammer - U Cant Touch This (HQ).mp3',
         'Mr. Blue Sky.mp3',
-        'Never Gonna Give You Up - Rick Astley (Lyrics).mp3'
+        'Never Gonna Give You Up - Rick Astley (Lyrics).mp3',
+        'Ryan Castro - Mujeriego (LetraLyrics).mp3'
     ]);
 
     return (
