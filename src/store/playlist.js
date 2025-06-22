@@ -14,7 +14,7 @@ export function PlaylistProvider({ children }) {
     };
 
     return (
-        <PlaylistContext.Provider value={{ playlist, addToPlaylist, removeFromPlaylist }}>
+        <PlaylistContext.Provider value={{ playlist, addToPlaylist, removeFromPlaylist, setPlaylist }}>
             {children}
         </PlaylistContext.Provider>
     );

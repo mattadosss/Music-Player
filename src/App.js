@@ -3,6 +3,7 @@ import Base from './layout/Base';
 import { Routes, Route } from 'react-router-dom';
 import Songs from './pages/Songs';
 import Main from './pages/Main';
+import PlaylistEditor from './pages/PlaylistEditor';
 import { usePlaylist } from './store/playlist';
 
 function App() {
@@ -125,6 +126,7 @@ function App() {
                     }
                 />
                 <Route path="/playlistbuilder" element={<Songs songs={songs} />} />
+                <Route path="/playlisteditor" element={<PlaylistEditor songs={songs} />} />
             </Routes>
         </Base>
     );

@@ -9,6 +9,7 @@ const Base = ({ children }) => (
           <div className="flex items-center space-x-6">
             <Link to="/" className="font-bold text-lg hover:text-blue-400 transition-colors">MUSIC-PLAYER</Link>
             <Link to="/playlistbuilder" className="text-base hover:text-blue-400 transition-colors">Playlist Builder</Link>
+            <Link to="/playlisteditor" className="text-base hover:text-blue-400 transition-colors">Playlist Editor</Link>
           </div>
         </div>
       </div>
