@@ -2,6 +2,15 @@ import React from 'react';
 import Player from '../components/Player';
 import { usePlaylist } from '../store/playlist';
 
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 const Main = ({
     currentSongIndex,
     songs,
@@ -18,7 +27,7 @@ const Main = ({
     handleLoadedMetadata,
     handleSongSelect
 }) => {
-    const { playlist } = usePlaylist();
+    const { playlist, setPlaylist } = usePlaylist();
 
     const handlePlayPlaylist = () => {
         if (playlist.length > 0) {
@@ -26,15 +35,30 @@ const Main = ({
         }
     };
 
+    const handleShuffleAndPlay = () => {
+        const shuffled = shuffleArray(songs.map((_, i) => i));
+        setPlaylist(shuffled);
+        if (shuffled.length > 0) {
+            handleSongSelect(shuffled[0]);
+        }
+    };
+
     return (
         <main className="py-8">
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-6 space-x-4">
                 <button
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
                     onClick={handlePlayPlaylist}
                     disabled={playlist.length === 0}
                 >
                     Play Playlist
+                </button>
+                <button
+                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+                    onClick={handleShuffleAndPlay}
+                    disabled={songs.length === 0}
+                >
+                    Shuffle & Play
                 </button>
             </div>
             <Player
