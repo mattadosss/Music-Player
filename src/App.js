@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import Player from './components/Player';
 import Base from './layout/Base';
+import { Routes, Route } from 'react-router-dom';
+import Songs from './pages/Songs';
+import Main from './pages/Main';
+import { usePlaylist } from './store/playlist';
 
 function App() {
     const [songs] = useState([
@@ -31,6 +34,10 @@ function App() {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const audioRef = useRef(null);
+    const { playlist } = usePlaylist();
+
+    // Helper to get the list the player should use
+    const getActiveList = () => (playlist.length > 0 ? playlist : songs.map((_, i) => i));
 
     const handleSongSelect = (index) => {
         setCurrentSongIndex(index);
@@ -47,14 +54,20 @@ function App() {
     };
 
     const playNextSong = () => {
-        const nextIndex = (currentSongIndex + 1) % songs.length;
-        setCurrentSongIndex(nextIndex);
+        const activeList = getActiveList();
+        if (currentSongIndex === null) return;
+        const currentPos = activeList.indexOf(currentSongIndex);
+        const nextPos = (currentPos + 1) % activeList.length;
+        setCurrentSongIndex(activeList[nextPos]);
         setIsPlaying(true);
     };
 
     const playPreviousSong = () => {
-        const prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-        setCurrentSongIndex(prevIndex);
+        const activeList = getActiveList();
+        if (currentSongIndex === null) return;
+        const currentPos = activeList.indexOf(currentSongIndex);
+        const prevPos = (currentPos - 1 + activeList.length) % activeList.length;
+        setCurrentSongIndex(activeList[prevPos]);
         setIsPlaying(true);
     };
 
@@ -89,46 +102,30 @@ function App() {
 
     return (
         <Base>
-            <main className="py-8">
-                <Player
-                    currentSongIndex={currentSongIndex}
-                    songs={songs}
-                    isPlaying={isPlaying}
-                    currentTime={currentTime}
-                    duration={duration}
-                    audioRef={audioRef}
-                    togglePlayPause={togglePlayPause}
-                    playNextSong={playNextSong}
-                    playPreviousSong={playPreviousSong}
-                    handleSeek={handleSeek}
-                    formatTime={formatTime}
-                    handleTimeUpdate={handleTimeUpdate}
-                    handleLoadedMetadata={handleLoadedMetadata}
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <Main
+                            currentSongIndex={currentSongIndex}
+                            songs={songs}
+                            isPlaying={isPlaying}
+                            currentTime={currentTime}
+                            duration={duration}
+                            audioRef={audioRef}
+                            togglePlayPause={togglePlayPause}
+                            playNextSong={playNextSong}
+                            playPreviousSong={playPreviousSong}
+                            handleSeek={handleSeek}
+                            formatTime={formatTime}
+                            handleTimeUpdate={handleTimeUpdate}
+                            handleLoadedMetadata={handleLoadedMetadata}
+                            handleSongSelect={handleSongSelect}
+                        />
+                    }
                 />
-
-                <div className="max-w-2xl mx-auto my-5">
-                    <h2 className="text-xl font-bold mb-4">Available Songs</h2>
-                    {songs.length === 0 ? (
-                        <p>No songs found</p>
-                    ) : (
-                        <ul className="space-y-2">
-                            {songs.map((song, index) => (
-                                <li
-                                    key={index}
-                                    className={`p-3 rounded cursor-pointer transition-colors ${
-                                        index === currentSongIndex
-                                            ? 'bg-blue-500 text-white'
-                                            : 'bg-gray-800 hover:bg-gray-700'
-                                    }`}
-                                    onClick={() => handleSongSelect(index)}
-                                >
-                                    {song.replace('.mp3', '')}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            </main>
+                <Route path="/playlistbuilder" element={<Songs songs={songs} />} />
+            </Routes>
         </Base>
     );
 }

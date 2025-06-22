@@ -1,14 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Base = ({ children }) => (
   <div className="min-h-screen bg-gray-900 text-white text-center">
     <header className="sm:flex sm:justify-between py-3">
       <div className="px-4 lg:px-8 mx-auto w-full max-w-4xl">
         <div className="border-b relative flex h-16 items-center justify-between w-full">
-          <div className="flex items-center">
-            <a className="flex items-center space-x-6">
-              MUSIC-PLAYER
-            </a>
+          <div className="flex items-center space-x-6">
+            <Link to="/" className="font-bold text-lg hover:text-blue-400 transition-colors">MUSIC-PLAYER</Link>
+            <Link to="/playlistbuilder" className="text-base hover:text-blue-400 transition-colors">Playlist Builder</Link>
           </div>
         </div>
       </div>
