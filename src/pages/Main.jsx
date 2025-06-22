@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Player from '../components/Player';
 import { usePlaylist } from '../store/playlist';
 
@@ -28,6 +28,7 @@ const Main = ({
     handleSongSelect
 }) => {
     const { playlist, setPlaylist } = usePlaylist();
+    const [search, setSearch] = useState("");
 
     const handlePlayPlaylist = () => {
         if (playlist.length > 0) {
@@ -42,6 +43,10 @@ const Main = ({
             handleSongSelect(shuffled[0]);
         }
     };
+
+    const filteredSongs = songs.filter(song =>
+        song.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <main className="py-8">
@@ -78,23 +83,34 @@ const Main = ({
             />
             <div className="max-w-2xl mx-auto my-5">
                 <h2 className="text-xl font-bold mb-4">Available Songs</h2>
-                {songs.length === 0 ? (
+                <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Search songs..."
+                    className="w-full mb-4 px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {filteredSongs.length === 0 ? (
                     <p>No songs found</p>
                 ) : (
                     <ul className="space-y-2">
-                        {songs.map((song, index) => (
-                            <li
-                                key={index}
-                                className={`p-3 rounded cursor-pointer transition-colors ${
-                                    index === currentSongIndex
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-800 hover:bg-gray-700'
-                                }`}
-                                onClick={() => handleSongSelect(index)}
-                            >
-                                {song.replace('.mp3', '')}
-                            </li>
-                        ))}
+                        {filteredSongs.map((song, index) => {
+                            // Find the real index in the original songs array
+                            const realIndex = songs.indexOf(song);
+                            return (
+                                <li
+                                    key={realIndex}
+                                    className={`p-3 rounded cursor-pointer transition-colors ${
+                                        realIndex === currentSongIndex
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-gray-800 hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => handleSongSelect(realIndex)}
+                                >
+                                    {song.replace('.mp3', '')}
+                                </li>
+                            );
+                        })}
                     </ul>
                 )}
             </div>
